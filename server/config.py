@@ -33,3 +33,5 @@ CORS(app)
 
 # 1. instantiate Bcrypt for password hashing
 bcrypt = Bcrypt(app)
+
+app.secret_key = b'y$2\xa7l\x89\xb0\t\x87\xb5\x1abf\xff\xeb\xd5'
