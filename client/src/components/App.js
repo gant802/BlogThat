@@ -5,12 +5,21 @@ import { Outlet } from "react-router-dom";
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null)
 
+  useEffect(() => {
+    fetch('/check_session')
+    .then(resp => {
+      if (resp.ok) {
+        resp.json().then(data => setLoggedInUser(data))
+      }
+    })
+  }, [])
+
   return (
     <div>
     {
       !loggedInUser ?
-      <Login /> :
-      <Outlet />
+      <Login setUser={setLoggedInUser}/> :
+      <Outlet context={[loggedInUser, setLoggedInUser]}/>
     }
     </div>
   )

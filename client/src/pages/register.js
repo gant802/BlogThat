@@ -3,19 +3,33 @@ import { Formik } from "formik";
 import * as yup from 'yup'
 import { useNavigate } from "react-router-dom";
 
-function Register() {
+function Register({setUser}) {
    const navigate = useNavigate()
 
     function handleFormSubmit(values) {
-        console.log(values)
-        navigate('/')
+        fetch('/signup', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify(values)
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(user => {
+                   setUser(user) 
+                   navigate('/')
+                })
+                
+            }
+        })
+        
     }
 
     let createProfileSchema = yup.object().shape({
         first_name: yup.string().required(),
         last_name: yup.string().required(),
-        username: yup.string().min(5, 'Username too Short!').max(20, 'Username too Long!').required(),
-        password: yup.string().min(5, 'Password too Short!').max(20, 'Password too Long!').required(),
+        username: yup.string().max(20, 'Username too Long!').required(),
+        password: yup.string().max(20, 'Password too Long!').required(),
         password_confirmation: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required(),
         profile_image: yup.string(),
         email: yup.string().email().required(),
@@ -25,7 +39,6 @@ function Register() {
 
     return (
         <div id="createProfileContainer">
-            <h2>Create your Profile</h2>
             <Formik
                 initialValues={{
                     first_name: "",

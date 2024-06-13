@@ -1,16 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { Link } from "react-router-dom";
+import Register from "./register";
+import { useNavigate } from "react-router-dom";
 
 
-
-function Login() {
+function Login({ setUser }) {
+    // Change back and forth from login form to create profile form
+    const [toggleForm, setToggleForm] = useState(false)
+    const [error, setError] = useState("")
+    const navigate = useNavigate()
 
     function handleLogin(values) {
-        console.log(values)
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify(values)
+        }).then((resp) => {
+            if (resp.ok) {
+                resp.json().then((user) => {
+                    setUser(user);
+                    navigate('/')
+                });
+            } else {
+                resp.json().then((error) => {
+                    setError(error);
+                })
+            }
+        })
+            .catch((error) => {
+                setError(error);
+            });
     }
 
+
+    // Login schema makes sure two passwords match
     let loginSchema = yup.object().shape({
         username: yup.string().required(),
         password: yup.string().required(),
@@ -19,8 +45,8 @@ function Login() {
 
     return (
         <div id="loginContainer">
-            <h1>Login</h1>
-            <Formik
+            <h1>{!toggleForm ? "Login" : "Create Your Account"}</h1> 
+            {!toggleForm ? <Formik
                 initialValues={{
                     username: '',
                     password: '',
@@ -29,7 +55,6 @@ function Login() {
                 validationSchema={loginSchema}
                 onSubmit={handleLogin}>
                 {(props) => {
-                    console.log(props)
                     const { values: { username, password, password_confirmation }, handleChange, handleSubmit, errors } = props
                     return (
                         <form id="loginForm" onSubmit={handleSubmit}>
@@ -40,18 +65,21 @@ function Login() {
                             <label>Password: </label>
                             <input onChange={handleChange} value={password}
                                 type="text" name="password" />
-                            
+
                             <label>Confirm Password: </label>
                             <input onChange={handleChange} value={password_confirmation}
                                 type="text" name="password_confirmation" />
-                            
+
                             <button type="submit">Submit</button>
                         </form>
                     )
                 }}
             </Formik>
-            <p>New User?</p>
-            <Link to="/register">Create an Account</Link>
+                :
+                <Register setUser={setUser} />}
+            {!toggleForm ? <p>{error.error}</p> : ""}
+            {!toggleForm ? <p>New User?</p> : ""}
+            <p onClick={() => setToggleForm(!toggleForm)}>{!toggleForm ? "Create an Account" : "Go back to Login"}</p>
         </div>
     )
 }
