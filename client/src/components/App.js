@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import Login from "../pages/login";
+import { Outlet } from "react-router-dom";
 
 function App() {
-  return <h1>Project Client</h1>;
+  const [loggedInUser, setLoggedInUser] = useState(null)
+
+  return (
+    <div>
+    {
+      !loggedInUser ?
+      <Login /> :
+      <Outlet />
+    }
+    </div>
+  )
 }
 
 export default App;
