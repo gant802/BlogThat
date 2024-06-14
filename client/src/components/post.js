@@ -1,8 +1,16 @@
 import React from "react";
 
-function Post(){
+function Post({data}){
     return (
-        <div>Single Post</div>
+        <div id="postContainer">
+            <div id="postHeaderContainer">
+                <p>{data.username}</p>
+                <p>{data.created_at}</p>
+            </div>
+            <div id="postContentContainer">
+                <p>{data.content}</p>
+            </div>
+        </div>
     )
 }
 

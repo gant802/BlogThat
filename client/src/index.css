@@ -1,7 +1,30 @@
-:root {
-  --bg: #282c34;
-  --header: #fff;
-  --link: #61dafb;
-  --text: hsla(0, 0%, 100%, 0.88);
+body {
+  margin: 0;
 }
 
+#navbarContainer{
+  margin: 0;
+  width: 100%;
+  height: 100px;
+  background-color: rgb(99, 99, 246);
+  border: 1px solid black;
+}
+
+#navbarInnerContainer {
+  margin: 0 auto;
+  width: 70%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbarButtons {
+  color: white;
+  text-decoration: none;
+  font-size: 2rem;
+}
+
+.navbarButtons:hover {
+  color: rgb(212, 212, 212);
+}

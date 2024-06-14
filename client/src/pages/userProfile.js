@@ -8,7 +8,7 @@ function UserProfile() {
     const { id } = useParams()
 
     useEffect(() => {
-        fetch(`/users/${id}`)
+        fetch(`http://127.0.0.1:5555/users/${id}`)
         .then(response => response.json())
         .then(data => {
             setUserProfile(data)
@@ -16,7 +16,7 @@ function UserProfile() {
     }, [id])
 
     function logoutTemp() {
-        fetch('/logout', {
+        fetch('http://127.0.0.1:5555/logout', {
             method: 'DELETE'
         }).then( resp => {
             if (resp.ok) {
