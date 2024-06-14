@@ -9,9 +9,11 @@ function NavBar(){
 
     return (
         <div id="navbarContainer">
-            <NavLink to="/">Home</NavLink>
-            <NavLink to="/search">Search</NavLink>
-            <NavLink to={`/user/${loggedInUser.id}`}>My profile</NavLink>
+            <div id="navbarInnerContainer">
+                <NavLink className="navbarButtons" to="/">Home</NavLink>
+            <NavLink className="navbarButtons" to="/search">Search</NavLink>
+            <NavLink className="navbarButtons" to={`/user/${loggedInUser.id}`}>My profile</NavLink>
+            </div>
         </div>
     )
 }

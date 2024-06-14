@@ -6,7 +6,7 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState(null)
 
   useEffect(() => {
-    fetch('/check_session')
+    fetch('http://127.0.0.1:5555/check_session')
     .then(resp => {
       if (resp.ok) {
         resp.json().then(data => setLoggedInUser(data))
@@ -15,7 +15,7 @@ function App() {
   }, [])
 
   return (
-    <div>
+    <div id="body">
     {
       !loggedInUser ?
       <Login setUser={setLoggedInUser}/> :
