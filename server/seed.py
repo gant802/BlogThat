@@ -8,7 +8,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db, User
+from models import db, User, Post, Follow
 
 if __name__ == '__main__':
     fake = Faker()
@@ -17,6 +17,8 @@ if __name__ == '__main__':
         # Seed code goes here!
         
         User.query.delete()
+        Post.query.delete()
+        Follow.query.delete()
 
         print("Creating Users...")
         users = []
@@ -37,6 +39,42 @@ if __name__ == '__main__':
             users.append(user)
         db.session.add_all(users)
         db.session.commit()
+
+
+
+        posts = [
+            Post(content="This is the first post", user_id=users[1].id),
+            Post(content="This is the second post", user_id=users[1].id),
+            Post(content="This is the third post", user_id=users[2].id),
+            Post(content="This is the fourth post", user_id=users[0].id),
+            Post(content="This is the fifth post", user_id=users[21].id)
+        ]
+
+        # Add all posts to the session
+        db.session.add_all(posts)
+        db.session.commit()
+
+        
+        #follower_user_id=users[1].id
+
+        follows = [
+            Follow(following_user_id=users[1].id,follower_user_id=users[2].id),
+            Follow(following_user_id=users[1].id,follower_user_id=users[3].id),
+            Follow(following_user_id=users[2].id,follower_user_id=users[1].id),
+            Follow(following_user_id=users[2].id,follower_user_id=users[3].id),
+            Follow(following_user_id=users[1].id,follower_user_id=users[4].id)
+        ]
+        db.session.add_all(follows)
+        db.session.commit()
+
+
+
+
+
+
+        
+
+
         
         # u1 = User(
         #     username = "dj",

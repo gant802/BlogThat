@@ -5,7 +5,7 @@
 # Remote library imports
 from flask import request, make_response, session
 from flask_restful import Resource
-from models import User
+from models import User, Post, Follow
 from config import app, db, api, bcrypt
 
 # Local imports
@@ -37,6 +37,79 @@ class UsersById(Resource):
             return make_response({'error': 'User not found'}, 404)
 
 api.add_resource(UsersById, '/users/<int:id>')
+
+class Posts(Resource):
+   def get(self):
+       posts = [post.to_dict() for post in Post.query.all()]
+       return make_response(posts, 200)
+  
+   def post(self):
+       params = request.json
+       new_post = Post(
+           content = params.get('content'),
+           user_id = session['user_id'])
+       db.session.add(new_post)
+
+  
+api.add_resource(Posts, '/posts')
+
+
+class PostById(Resource):
+
+    def get(self, id):
+        post = Post.query.filter(Post.id == id).first()
+        if not post:
+            return make_response({"error": "Post not found"}, 404)
+        return make_response(post.to_dict(), 200)
+    
+    def patch(self, id):
+        post = Post.query.filter(Post.id == id).first()
+        if not post:
+            return make_response({"error": "Post not found"}, 404)
+        
+        try:
+            params = request.json
+            for attr in params:
+                setattr(post, attr, params[attr])
+            db.session.commit()
+
+            post_dict = post.to_dict()
+            return make_response(post_dict, 202)
+        
+        except ValueError as v_error:
+            return make_response({'errors': ["validation errors"]}, 400)
+        
+    def delete(self, id):
+        post = Post.query.filter(Post.id == id).first()
+        if not post:
+            response = {"error": "Post not found"}
+            return make_response(response, 404)
+        db.session.delete(post)
+        db.session.commit()
+
+        return '', 204
+
+api.add_resource(PostById, '/posts/<int:id>')
+
+#checks for all people user is following
+#take the folowing_user_id from object to get followers
+class FollowingById(Resource):
+    def get(self, id):
+        following = Follow.query.filter(Follow.follower_user_id == id).all()
+        following_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
+        return make_response(following_list, 200)
+api.add_resource(FollowingById, '/following/<int:id>')
+
+#take the folower_user_id from object to get followers
+class FollowersById(Resource):
+    def get(self, id):
+        following = Follow.query.filter(Follow.following_user_id == id).all()
+        following_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
+        return make_response(following_list, 200)
+api.add_resource(FollowersById, '/followers/<int:id>')
+    
+
+    
 
 class CheckSession(Resource):
     def get(self):
@@ -72,6 +145,7 @@ class SignUp(Resource):
             return make_response({"error": str(e)}, 400)
         
 api.add_resource(SignUp, '/signup')
+
 
 class Login(Resource):
     def post(self):
