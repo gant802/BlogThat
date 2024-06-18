@@ -110,8 +110,8 @@ api.add_resource(FollowingById, '/following/<int:id>')
 class FollowersById(Resource):
     def get(self, id):
         following = Follow.query.filter(Follow.following_user_id == id).all()
-        following_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
-        return make_response(following_list, 200)
+        following_dict = [follow.to_dict(rules=('-follower','-following')) for follow in following]
+        return make_response(following_dict, 200)
 api.add_resource(FollowersById, '/followers/<int:id>')
 
 # class FollowerPosts(Resource):
@@ -143,7 +143,7 @@ class FollowerPosts(Resource):
         
         return make_response(posts_dict, 200)
 
-api.add_resource(FollowerPosts, '/follower_posts/<int:id>')
+api.add_resource(FollowerPosts, '/follower_posts')
     
 
     

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import FeedContainer from "../components/feedContainer";
 import NavBar from "../components/navbar";
+import CreatePost from "../components/createPost";
 
 function Home(){
     // const [posts, setPosts] = useState([]);
@@ -16,6 +17,7 @@ function Home(){
     return(
         <div>
             <NavBar />
+            <CreatePost />
             <FeedContainer />
         </div>
     )
