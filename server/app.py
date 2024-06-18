@@ -12,9 +12,6 @@ from config import app, db, api, bcrypt
 from config import app, db, api
 # Add your model imports
 
-
-# Views go here!
-
 @app.route('/')
 def index():
     return '<h1>Project Server</h1>'
@@ -91,6 +88,15 @@ class PostById(Resource):
 
 api.add_resource(PostById, '/posts/<int:id>')
 
+class PostByUserId(Resource):
+    def get(self, user_id):
+        posts = Post.query.filter(Post.user_id == user_id).all()
+        if not posts:
+            return make_response({"error": "Posts not found"}, 404)
+        return make_response([post.to_dict() for post in posts], 200)
+    
+api.add_resource(PostByUserId, '/posts/user/<int:user_id>')
+
 #checks for all people user is following
 #take the folowing_user_id from object to get followers
 class FollowingById(Resource):
@@ -107,12 +113,48 @@ class FollowersById(Resource):
         following_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
         return make_response(following_list, 200)
 api.add_resource(FollowersById, '/followers/<int:id>')
+
+# class FollowerPosts(Resource):
+#     def get(self):
+#         user_id = session.get('user_id')
+#         if not user_id:
+#             return make_response({'error': 'Unauthorized: Must login'}, 401)
+        
+#         user = User.query.get(user_id)
+#         if not user:
+#             return make_response({'error': 'User not found'}, 404)
+        
+#         posts = user.following_posts
+#         posts_list = [post.to_dict() for post in posts]
+        
+#         return make_response(posts_list, 200)
+
+# api.add_resource(FollowerPosts, '/follower_posts')
+
+class FollowerPosts(Resource):
+    def get(self, id):
+        
+        user = User.query.get(id)
+        if not user:
+            return make_response({'error': 'User not found'}, 404)
+        
+        posts = user.following_posts
+        posts_dict = [post.to_dict() for post in posts]
+        
+        return make_response(posts_dict, 200)
+
+api.add_resource(FollowerPosts, '/follower_posts/<int:id>')
     
 
     
 
 class CheckSession(Resource):
     def get(self):
+        # user = User.query.filter(User.id == session.get('user_id')).first()
+        # if user:
+        #     return make_response(user.to_dict(), 200)
+        # return make_response({'error': 'Unauthorized: Must login'}, 401)
+
         user_id = session.get('user_id')
         if user_id:
             user = db.session.get(User, user_id)

@@ -43,8 +43,8 @@ if __name__ == '__main__':
 
 
         posts = [
-            Post(content="This is the first post", user_id=users[1].id),
-            Post(content="This is the second post", user_id=users[1].id),
+            Post(content="This is the first post", user_id=users[2].id),
+            Post(content="This is the second post", user_id=users[2].id),
             Post(content="This is the third post", user_id=users[2].id),
             Post(content="This is the fourth post", user_id=users[0].id),
             Post(content="This is the fifth post", user_id=users[21].id)
