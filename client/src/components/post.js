@@ -2,12 +2,12 @@ import React from "react";
 
 function Post({data}){
     return (
-        <div id="postContainer">
-            <div id="postHeaderContainer">
+        <div classname="postContainer">
+            <div className="postHeaderContainer">
                 <p>{data.username}</p>
                 <p>{data.created_at}</p>
             </div>
-            <div id="postContentContainer">
+            <div className="postContentContainer">
                 <p>{data.content}</p>
             </div>
         </div>
