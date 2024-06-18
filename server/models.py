@@ -41,10 +41,13 @@ class User(db.Model, SerializerMixin):
     following = db.relationship('Follow', foreign_keys='Follow.follower_user_id', back_populates='follower', cascade='all, delete-orphan')
     followers = db.relationship('Follow', foreign_keys='Follow.following_user_id', back_populates='following', cascade='all, delete-orphan')
 
-    # @property
-    # def following_posts(self):
-    #     return self.following.posts
-    # must first create relationship with post and follow table
+    @property
+    def following_posts(self):
+        followed_users_ids = [follow.following_user_id for follow in self.following]
+        posts = Post.query.filter(Post.user_id.in_(followed_users_ids)).all()
+        return posts
+
+    
 
     def __repr__(self):
         return f'<User id={self.id} username={self.username} >'

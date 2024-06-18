@@ -104,9 +104,40 @@ api.add_resource(FollowingById, '/following/<int:id>')
 class FollowersById(Resource):
     def get(self, id):
         following = Follow.query.filter(Follow.following_user_id == id).all()
-        following_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
-        return make_response(following_list, 200)
+        following_dict = [follow.to_dict(rules=('-follower','-following')) for follow in following]
+        return make_response(following_dict, 200)
 api.add_resource(FollowersById, '/followers/<int:id>')
+
+# class FollowerPosts(Resource):
+#     def get(self):
+#         user_id = session.get('user_id')
+#         if not user_id:
+#             return make_response({'error': 'Unauthorized: Must login'}, 401)
+        
+#         user = User.query.get(user_id)
+#         if not user:
+#             return make_response({'error': 'User not found'}, 404)
+        
+#         posts = user.following_posts
+#         posts_list = [post.to_dict() for post in posts]
+        
+#         return make_response(posts_list, 200)
+
+# api.add_resource(FollowerPosts, '/follower_posts')
+
+class FollowerPosts(Resource):
+    def get(self, id):
+        
+        user = User.query.get(id)
+        if not user:
+            return make_response({'error': 'User not found'}, 404)
+        
+        posts = user.following_posts
+        posts_dict = [post.to_dict() for post in posts]
+        
+        return make_response(posts_dict, 200)
+
+api.add_resource(FollowerPosts, '/follower_posts')
     
 
     
