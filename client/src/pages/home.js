@@ -5,24 +5,25 @@ import CreatePost from "../components/createPost";
 import { useOutletContext } from "react-router-dom";
 
 function Home(){
-    const [posts, setPosts] = useState([]);
-    const [loggedInUser, setLoggedInUser] = useOutletContext()
+    const [loggedInUser, setLoggedInUser, posts, setPosts] = useOutletContext()
+    const [toggleHome, setToggleHome] = useState(true)
+
 
     useEffect(() => {
-        fetch('/follower_posts')
-        .then(res => res.json())
+        fetch('/following_posts')
+        .then(response => response.json())
         .then(data => setPosts(data))
-    }, [])
-
+        
+    }, [toggleHome])
 
 
     return(
         <div>
-            <NavBar />
+            <NavBar toggleHome={toggleHome} setToggleHome={setToggleHome}/>
             <CreatePost posts={posts} 
             setPosts={setPosts}
             user={loggedInUser}/>
-            <FeedContainer posts={posts}/>
+            <FeedContainer user={loggedInUser} setPosts={setPosts} posts={posts}/>
         </div>
     )
 }

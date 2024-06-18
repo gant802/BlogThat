@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null)
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     fetch('/check_session')
@@ -13,13 +14,14 @@ function App() {
       }
     })
   }, [])
+  
 
   return (
     <div id="body">
     {
       !loggedInUser ?
       <Login setUser={setLoggedInUser}/> :
-      <Outlet context={[loggedInUser, setLoggedInUser]}/>
+      <Outlet context={[loggedInUser, setLoggedInUser, posts, setPosts]}/>
     }
     </div>
   )

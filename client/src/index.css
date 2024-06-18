@@ -8,7 +8,7 @@ body {
   border: 1px solid black;
   width: 50%;
   text-align: center;
-  margin: auto;
+  margin: 40px auto 0 auto;
 }
 
 .loginSignupForm {
@@ -73,4 +73,42 @@ body {
 
 .navbarButtons:hover {
   color: rgb(212, 212, 212);
+}
+
+/*---- Search -----*/
+#searchPageContainer{
+  border: 1px solid black;
+  width: 60%;
+  margin: 0 auto;
+  padding-top: 50px;
+}
+
+#searchBarContainer{
+  width: 50%;
+  margin: 0 auto;
+}
+
+#searchInput{
+  width: 80%;
+  height: 20px;
+}
+
+#searchButton{
+  height: 25px;
+}
+
+#followersFollowingContainer{
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  margin: 0 auto;
+}
+
+#followersFollowingContainer > h2{
+  cursor: pointer;
+  color: #0977ed;
+}
+
+#followersFollowingContainer > h2:hover{
+  color: #4ca0e4;
 }

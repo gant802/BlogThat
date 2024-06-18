@@ -75,13 +75,14 @@ class PostById(Resource):
             params = request.json
             for attr in params:
                 setattr(post, attr, params[attr])
+            db.session.add(post)
             db.session.commit()
 
             post_dict = post.to_dict()
             return make_response(post_dict, 202)
         
         except ValueError as v_error:
-            return make_response({'errors': ["validation errors"]}, 400)
+            return make_response({'errors': str(v_error)}, 400)
         
     def delete(self, id):
         post = Post.query.filter(Post.id == id).first()
@@ -110,7 +111,8 @@ class Following(Resource):
     #tested with id param, not with session
     def get(self):
         following = Follow.query.filter(Follow.follower_user_id == session['user_id']).all()
-        following_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
+        following_row_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
+        following_list = [User.query.get(following["following_user_id"]).to_dict() for following in following_row_list]
         return make_response(following_list, 200)
     
     #needs session testing
@@ -147,15 +149,16 @@ api.add_resource(Unfollow, '/unfollow/<int:id>')
 
 
 
-#take the folower_user_id from object to get followers
+#take the follower_user_id from object to get followers
 class FollowersById(Resource):
     def get(self, id):
-        following = Follow.query.filter(Follow.following_user_id == id).all()
-        following_dict = [follow.to_dict(rules=('-follower','-following')) for follow in following]
-        return make_response(following_dict, 200)
+        followers = Follow.query.filter(Follow.following_user_id == id).all()
+        followers_dict = [follower.to_dict(rules=('-follower','-following')) for follower in followers]
+        followers_list = [User.query.get(follower['follower_user_id']).to_dict() for follower in  followers_dict]
+        return make_response(followers_list, 200)
 api.add_resource(FollowersById, '/followers/<int:id>')
 
-class FollowerPosts(Resource):
+class FollowingPosts(Resource):
     def get(self):
         user_id = session.get('user_id')
         if not user_id:
@@ -170,7 +173,7 @@ class FollowerPosts(Resource):
         
         return make_response(posts_list, 200)
 
-api.add_resource(FollowerPosts, '/follower_posts')
+api.add_resource(FollowingPosts, '/following_posts')
 
     
 

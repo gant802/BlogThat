@@ -4,9 +4,8 @@ import { useOutletContext, useParams } from "react-router-dom";
 import Post from "../components/post";
 
 function UserProfile() {
-    const [loggedInUser, setLoggedInUser] = useOutletContext()
+    const [loggedInUser, setLoggedInUser, posts, setPosts] = useOutletContext()
     const [userProfile, setUserProfile] = useState({})
-    const [usersPosts, setUsersPosts] = useState([])
     const { id } = useParams()
 
     useEffect(() => {
@@ -14,17 +13,16 @@ function UserProfile() {
             .then(response => response.json())
             .then(data => {
                 setUserProfile(data)
-                console.log(data)
             })
         fetch(`/posts/user/${id}`)
             .then(response => {
                 if (response.ok) {
                     response.json()
             .then(data => {
-                setUsersPosts(data)
-                console.log(data)
+                setPosts(data)
             })
                 } else {
+                    setPosts(null)
                     return console.log("no posts found")
                 }
             })
@@ -42,12 +40,12 @@ function UserProfile() {
         })
     }
 
-    console.log(usersPosts)
 
-    const usersPostsListed = usersPosts.map((post, index) => {
-        return <Post key={index} data={post}/>
+    
+    let usersPostsListed = posts == null ? <h2>User has no posts yet!</h2> : posts.map((post, index) => {
+        return <Post key={index} allPosts={posts} setPosts={setPosts} user={loggedInUser} data={post}/>
     })
-
+    
 
     return (
         <div>
