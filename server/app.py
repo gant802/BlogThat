@@ -36,16 +36,21 @@ class UsersById(Resource):
 api.add_resource(UsersById, '/users/<int:id>')
 
 class Posts(Resource):
-   def get(self):
+    def get(self):
        posts = [post.to_dict() for post in Post.query.all()]
        return make_response(posts, 200)
-  
-   def post(self):
-       params = request.json
-       new_post = Post(
-           content = params.get('content'),
-           user_id = session['user_id'])
-       db.session.add(new_post)
+
+#needs session testing 
+    def post(self):
+        try:
+            params = request.json
+            new_post = Post(
+                content = params.get('content'),
+                user_id = session['user_id'])
+            db.session.add(new_post)
+            return make_response(new_post.to_dict(), 201)
+        except ValueError as v_error:
+            return make_response({'errors': [str(v_error)]}, 400)
 
   
 api.add_resource(Posts, '/posts')
@@ -99,12 +104,46 @@ api.add_resource(PostByUserId, '/posts/user/<int:user_id>')
 
 #checks for all people user is following
 #take the folowing_user_id from object to get followers
-class FollowingById(Resource):
-    def get(self, id):
-        following = Follow.query.filter(Follow.follower_user_id == id).all()
+class Following(Resource):
+    #tested with id param, not with session
+    def get(self):
+        following = Follow.query.filter(Follow.follower_user_id == session['user_id']).all()
         following_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
         return make_response(following_list, 200)
-api.add_resource(FollowingById, '/following/<int:id>')
+    
+    #needs session testing
+    def post(self):
+        try:
+            params = request.json
+            new_follow = Follow(
+                following_user_id = params.get('user_id'),
+                follower_user_id = session['user_id']
+            )
+            db.session.add(new_follow)
+            return make_response(new_follow.to_dict(), 201)
+        except ValueError as v_error:
+            return make_response({'errors': [str(v_error)]}, 400)
+    
+        
+api.add_resource(Following, '/following')
+
+class Unfollow(Resource):
+    def delete(self, id):
+        follow = Follow.query.filter(Follow.id == id).first()
+        if not follow:
+            response = {"error": "User is not following"}
+            return make_response(response, 404)
+        db.session.delete(follow)
+        db.session.commit()
+        return '', 204
+    
+api.add_resource(Unfollow, '/unfollow/<int:id>')
+        
+
+
+
+
+
 
 #take the folower_user_id from object to get followers
 class FollowersById(Resource):
@@ -114,36 +153,23 @@ class FollowersById(Resource):
         return make_response(following_dict, 200)
 api.add_resource(FollowersById, '/followers/<int:id>')
 
-# class FollowerPosts(Resource):
-#     def get(self):
-#         user_id = session.get('user_id')
-#         if not user_id:
-#             return make_response({'error': 'Unauthorized: Must login'}, 401)
-        
-#         user = User.query.get(user_id)
-#         if not user:
-#             return make_response({'error': 'User not found'}, 404)
-        
-#         posts = user.following_posts
-#         posts_list = [post.to_dict() for post in posts]
-        
-#         return make_response(posts_list, 200)
-
-# api.add_resource(FollowerPosts, '/follower_posts')
-
 class FollowerPosts(Resource):
-    def get(self, id):
+    def get(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({'error': 'Unauthorized: Must login'}, 401)
         
-        user = User.query.get(id)
+        user = User.query.get(user_id)
         if not user:
             return make_response({'error': 'User not found'}, 404)
         
         posts = user.following_posts
-        posts_dict = [post.to_dict() for post in posts]
+        posts_list = [post.to_dict() for post in posts]
         
-        return make_response(posts_dict, 200)
+        return make_response(posts_list, 200)
 
 api.add_resource(FollowerPosts, '/follower_posts')
+
     
 
     
