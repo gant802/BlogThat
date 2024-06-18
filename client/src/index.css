@@ -1,7 +1,53 @@
+/*---- General -----*/
 body {
   margin: 0;
 }
 
+/*---- Login ----*/ 
+.loginSignupContainer {
+  border: 1px solid black;
+  width: 50%;
+  text-align: center;
+  margin: auto;
+}
+
+.loginSignupForm {
+  text-align: left;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.loginSignupForm > label {
+  display: block;
+  margin-top: 10px;
+}
+
+.loginSignupForm > input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+}
+
+.loginSignupForm > button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#toggleLoginCreateButton {
+  margin-top: 10px;
+  cursor: pointer;
+  color: #007bff;
+}
+
+#newUserText {
+  color: black;
+}
+
+/*---- Navbar -----*/
 #navbarContainer{
   margin: 0;
   width: 100%;

@@ -40,6 +40,7 @@ class Posts(Resource):
        posts = [post.to_dict() for post in Post.query.all()]
        return make_response(posts, 200)
 
+
 #needs session testing 
     def post(self):
         try:
@@ -48,6 +49,7 @@ class Posts(Resource):
                 content = params.get('content'),
                 user_id = session['user_id'])
             db.session.add(new_post)
+            db.session.commit()
             return make_response(new_post.to_dict(), 201)
         except ValueError as v_error:
             return make_response({'errors': [str(v_error)]}, 400)

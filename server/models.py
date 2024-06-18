@@ -55,8 +55,6 @@ class User(db.Model, SerializerMixin):
 
 class Post(db.Model, SerializerMixin):
    __tablename__ = 'posts'
-
-   serialize_rules = ("-user",)
   
    id = db.Column(db.Integer, primary_key=True)
    content = db.Column(db.String, nullable=False)

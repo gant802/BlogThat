@@ -44,7 +44,7 @@ function Login({ setUser }) {
     })
 
     return (
-        <div id="loginContainer">
+        <div className="loginSignupContainer">
             <h1>{!toggleForm ? "Login" : "Create Your Account"}</h1> 
             {!toggleForm ? <Formik
                 initialValues={{
@@ -57,7 +57,7 @@ function Login({ setUser }) {
                 {(props) => {
                     const { values: { username, password, password_confirmation }, handleChange, handleSubmit, errors } = props
                     return (
-                        <form id="loginForm" onSubmit={handleSubmit}>
+                        <form className="loginSignupForm" onSubmit={handleSubmit}>
                             <label htmlFor="username">Username: </label>
                             <input id="username" onChange={handleChange} value={username}
                                 type="text" name="username" />
@@ -77,9 +77,9 @@ function Login({ setUser }) {
             </Formik>
                 :
                 <Register setUser={setUser} />}
-            {!toggleForm ? <p>{error.error}</p> : ""}
-            {!toggleForm ? <p>New User?</p> : ""}
-            <p onClick={() => setToggleForm(!toggleForm)}>{!toggleForm ? "Create an Account" : "Go back to Login"}</p>
+            {!toggleForm ? <p id="loginErrorText">{error.error}</p> : ""}
+            {!toggleForm ? <p id="newUserText">New User?</p> : ""}
+            <p id="toggleLoginCreateButton" onClick={() => setToggleForm(!toggleForm)}>{!toggleForm ? "Create an Account" : "Go back to Login"}</p>
         </div>
     )
 }

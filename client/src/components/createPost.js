@@ -2,11 +2,25 @@ import React from "react";
 import { Formik } from "formik";
 import * as yup from 'yup';
 
-function CreatePost() {
+function CreatePost({ setPosts, posts, user }) {
 
     function handleFormSubmit(values) {
         console.log(values);
-        //Logic for posting to a certain route
+        fetch('/posts', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify(values)
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(data => {
+                console.log(data)
+                setPosts([data, ...posts])
+                })
+                
+            }
+        })
     }
 
     let createPostSchema = yup.object().shape({
@@ -18,7 +32,8 @@ function CreatePost() {
             <h2>What's on your mind?</h2>
             <Formik
                 initialValues={{
-                    content: ""
+                    content: "",
+                    user_id: user.id
                 }}
                 validationSchema={createPostSchema}
                 onSubmit={handleFormSubmit}

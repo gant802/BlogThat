@@ -38,7 +38,7 @@ function Register({setUser}) {
     })
 
     return (
-        <div id="createProfileContainer">
+        <div className="loginSignupContainerr">
             <Formik
                 initialValues={{
                     first_name: "",
@@ -68,7 +68,7 @@ function Register({setUser}) {
                         phone_number
                         },
                         handleChange, handleSubmit, errors } = props
-                    return (<form id="createProfileForm" onSubmit={handleSubmit}>
+                    return (<form className="loginSignupForm" onSubmit={handleSubmit}>
                         <label>First Name: </label>
                         <input onChange={handleChange} value={first_name}
                             type="text" name="first_name" />
@@ -106,9 +106,7 @@ function Register({setUser}) {
                         <input onChange={handleChange} value={phone_number}
                             type="text" name="phone_number" />
 
-                        <div>
-                            <button type="submit">Create Profile</button>
-                        </div>
+                        <button type="submit">Create Profile</button>
 
                     </form>)
                 }}

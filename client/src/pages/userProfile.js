@@ -17,10 +17,16 @@ function UserProfile() {
                 console.log(data)
             })
         fetch(`/posts/user/${id}`)
-            .then(response => response.json())
+            .then(response => {
+                if (response.ok) {
+                    response.json()
             .then(data => {
                 setUsersPosts(data)
                 console.log(data)
+            })
+                } else {
+                    return console.log("no posts found")
+                }
             })
 
     }, [id])
@@ -36,21 +42,12 @@ function UserProfile() {
         })
     }
 
-    // console.log(usersPosts)
+    console.log(usersPosts)
 
-    // const usersPostsListed = usersPosts.map(post => {
-    //     return (
-    //         <div classname="postContainer">
-    //         <div className="postHeaderContainer">
-    //             <p>{loggedInUser.username}</p>
-    //             <p>{post.created_at}</p>
-    //         </div>
-    //         <div className="postContentContainer">
-    //             <p>{post.content}</p>
-    //         </div>
-    //     </div>
-    //     )
-    // })
+    const usersPostsListed = usersPosts.map((post, index) => {
+        return <Post key={index} data={post}/>
+    })
+
 
     return (
         <div>
@@ -62,7 +59,7 @@ function UserProfile() {
                 <h2>{`${userProfile.username}'s Profile`}</h2>
                 {id === loggedInUser.id.toString() ? <button onClick={logoutTemp}>Logout</button> : ''}
                 <div id="userPostsContainer">
-                    {/* {usersPostsListed} */}
+                    {usersPostsListed}
                 </div>
             </div>
 
