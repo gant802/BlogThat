@@ -12,9 +12,6 @@ from config import app, db, api, bcrypt
 from config import app, db, api
 # Add your model imports
 
-
-# Views go here!
-
 @app.route('/')
 def index():
     return '<h1>Project Server</h1>'
@@ -91,6 +88,15 @@ class PostById(Resource):
 
 api.add_resource(PostById, '/posts/<int:id>')
 
+class PostByUserId(Resource):
+    def get(self, user_id):
+        posts = Post.query.filter(Post.user_id == user_id).all()
+        if not posts:
+            return make_response({"error": "Posts not found"}, 404)
+        return make_response([post.to_dict() for post in posts], 200)
+    
+api.add_resource(PostByUserId, '/posts/user/<int:user_id>')
+
 #checks for all people user is following
 #take the folowing_user_id from object to get followers
 class FollowingById(Resource):
@@ -144,6 +150,11 @@ api.add_resource(FollowerPosts, '/follower_posts')
 
 class CheckSession(Resource):
     def get(self):
+        # user = User.query.filter(User.id == session.get('user_id')).first()
+        # if user:
+        #     return make_response(user.to_dict(), 200)
+        # return make_response({'error': 'Unauthorized: Must login'}, 401)
+
         user_id = session.get('user_id')
         if user_id:
             user = db.session.get(User, user_id)

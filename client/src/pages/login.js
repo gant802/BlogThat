@@ -12,7 +12,7 @@ function Login({ setUser }) {
     const navigate = useNavigate()
 
     function handleLogin(values) {
-        fetch('http://127.0.0.1:5555/login', {
+        fetch('/login', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -58,16 +58,16 @@ function Login({ setUser }) {
                     const { values: { username, password, password_confirmation }, handleChange, handleSubmit, errors } = props
                     return (
                         <form id="loginForm" onSubmit={handleSubmit}>
-                            <label>Username: </label>
-                            <input onChange={handleChange} value={username}
+                            <label htmlFor="username">Username: </label>
+                            <input id="username" onChange={handleChange} value={username}
                                 type="text" name="username" />
 
-                            <label>Password: </label>
-                            <input onChange={handleChange} value={password}
+                            <label htmlFor="password">Password: </label>
+                            <input id="password" onChange={handleChange} value={password}
                                 type="text" name="password" />
 
-                            <label>Confirm Password: </label>
-                            <input onChange={handleChange} value={password_confirmation}
+                            <label htmlFor="password_confirmation">Confirm Password: </label>
+                            <input id="password_confirmation" onChange={handleChange} value={password_confirmation}
                                 type="text" name="password_confirmation" />
 
                             <button type="submit">Submit</button>
