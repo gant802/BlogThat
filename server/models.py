@@ -46,30 +46,59 @@ class User(db.Model, SerializerMixin):
         followed_users_ids = [follow.following_user_id for follow in self.following]
         posts = Post.query.filter(Post.user_id.in_(followed_users_ids)).all()
         return posts
-
     
+    @validates('email')
+    def validate_email(self, key, address):
+        if address is None:
+            return address
+        if '@' not in address:
+            raise ValueError("Invalid email address")
+        return address
+    
+    
+    @validates('phone_number')
+    def validate_phone_number(self, key, phone_number):
+        if phone_number is None:
+            return phone_number
+        phone_number_str = str(phone_number)
+        if len(phone_number_str) != 10 or not phone_number_str.isdigit():
+            raise ValueError("Invalid phone number")
+        return phone_number
+
 
     def __repr__(self):
         return f'<User id={self.id} username={self.username} >'
 
 
 class Post(db.Model, SerializerMixin):
-   __tablename__ = 'posts'
+    __tablename__ = 'posts'
   
-   id = db.Column(db.Integer, primary_key=True)
-   content = db.Column(db.String, nullable=False)
-   created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
-   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String, nullable=False)
+    created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 
 
-   user = db.relationship('User', back_populates='posts')
+    user = db.relationship('User', back_populates='posts')
   
-   @property
-   #call using Post.username
-   def username(self):
+    @property
+    #call using Post.username
+    def username(self):
        return self.user.username
+
+    @validates('content')
+    def validate_content(self, key, content):
+        if len(content) == 0:
+            raise ValueError("Content cannot be empty")
+        return content
+    
+    @validates('user_id')
+    def validate_user_id(self, key, user_id):
+        if user_id is None:
+            raise ValueError("Post must contain user ID")
+        return user_id
 
 
 
@@ -88,7 +117,28 @@ class Follow(db.Model, SerializerMixin):
     following = db.relationship('User', foreign_keys=[following_user_id], back_populates='followers')
     follower = db.relationship('User', foreign_keys=[follower_user_id], back_populates='following')
 
-    
+    @validates('following_user_id', 'follower_user_id')
+    def validate_not_following_self(self, key, value):
+        if key == 'following_user_id':
+            following_user_id = value
+            follower_user_id = self.follower_user_id
+        else:
+            follower_user_id = value
+            following_user_id = self.following_user_id
 
-    #constraints for no repeats
-    #constraints for following cant equal follower
+        if following_user_id is not None and follower_user_id is not None:
+            if following_user_id == follower_user_id:
+                raise ValueError("User cannot follow themselves")
+        
+
+        follow_exists = db.session.query(Follow).filter_by(
+                following_user_id=following_user_id,
+                follower_user_id=follower_user_id
+            ).first()
+            
+        if follow_exists:
+            raise ValueError("This follow relationship already exists")
+            
+
+        return value
+    
