@@ -30,13 +30,25 @@ function Post({allPosts, data, user, setPosts}){
                 } 
             })
             .catch(error => console.log(error))
-                 
         }
+
+    function handleDeletePost(){
+        fetch(`/posts/${data.id}`, {
+            method: "DELETE",
+        }).then(() => {
+            const updatedPosts = allPosts.filter(post => post.id !== data.id);
+            setPosts(updatedPosts);
+        })
+    }
     
     
 
-    const editButton = user.id === data.user.id ?
+    const editPostButton = user.id === data.user.id ?
     <button id="editPostButton" onClick={() => setEditToggle(!editToggle)}>Edit</button> :
+    "";
+
+    const deletePostButton = user.id === data.user.id ?
+    <button id="deletePostButton" onClick={() => handleDeletePost()}>Delete</button> :
     "";
 
     const editPostSchema = yup.object().shape({
@@ -47,7 +59,8 @@ function Post({allPosts, data, user, setPosts}){
         <div className="postContainer">
             <div className="postHeaderContainer">
                 <p>{data.user.username}</p>
-                {editButton}
+                {editPostButton}
+                {deletePostButton}
                 <p>{data.created_at}</p>
             </div>
             <div className="postContentContainer">

@@ -12,7 +12,9 @@ function Home(){
     useEffect(() => {
         fetch('/following_posts')
         .then(response => response.json())
-        .then(data => setPosts(data))
+        .then(data => {
+           setPosts(data) 
+        })
         
     }, [toggleHome])
 

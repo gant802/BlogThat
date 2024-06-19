@@ -3,9 +3,13 @@ import Post from "./post";
 
 function FeedContainer({posts, user, setPosts}){
 
-    const postsListed = posts.map((post, index) => {
+    let postsListed;
+    if (posts) {
+        postsListed = posts.map((post, index) => {
         return <Post key={index} allPosts={posts} setPosts={setPosts} user={user} data={post}/>
     })
+    }
+    
 
     
 

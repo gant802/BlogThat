@@ -6,6 +6,7 @@ import Post from "../components/post";
 function UserProfile() {
     const [loggedInUser, setLoggedInUser, posts, setPosts] = useOutletContext()
     const [userProfile, setUserProfile] = useState({})
+    const [toggleFollow, setToggleFollow] = useState(false)
     const { id } = useParams()
 
     useEffect(() => {
@@ -18,16 +19,28 @@ function UserProfile() {
             .then(response => {
                 if (response.ok) {
                     response.json()
-            .then(data => {
-                setPosts(data)
-            })
+                        .then(data => {
+                            setPosts(data)
+                        })
                 } else {
                     setPosts(null)
                     return console.log("no posts found")
                 }
             })
 
+
+
     }, [id])
+
+    useEffect(() => {
+        fetch(`/following/${id}`)
+            .then(res => {
+                if (res.ok) {
+                    console.log("res.ok")
+                    setToggleFollow(true)
+                }
+            })
+    }, [])
 
     function logoutTemp() {
         fetch('/logout', {
@@ -35,17 +48,40 @@ function UserProfile() {
         }).then(resp => {
             if (resp.ok) {
                 setLoggedInUser(null)
-
             }
         })
     }
 
+    function followOrUnfollow(boolean){
+        if(boolean){
+            fetch(`/unfollow/${id}`, {
+                method: 'DELETE'
+            }).then(resp => {
+                if (resp.ok) {
+                    setToggleFollow(false)
+                }
+            })
+        } else {
+            fetch(`/following`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ "user_id": id
+                 })
+            }).then(resp => resp.json())
+            .then(data => {
+                setToggleFollow(true)
+            })
+        }
+    }
 
-    
-    let usersPostsListed = posts == null ? <h2>User has no posts yet!</h2> : posts.map((post, index) => {
-        return <Post key={index} allPosts={posts} setPosts={setPosts} user={loggedInUser} data={post}/>
+
+
+
+
+    let usersPostsListed = posts === null ? <h2>User has no posts yet!</h2> : posts.map((post, index) => {
+        return <Post key={index} allPosts={posts} setPosts={setPosts} user={loggedInUser} data={post} />
     })
-    
+
 
     return (
         <div>
@@ -55,6 +91,12 @@ function UserProfile() {
                     userProfile.profile_image :
                     "https://www.nevadahealthcenters.org/wp-content/uploads/2018/09/no-profile-picture.jpg"} alt="profile_photo" />
                 <h2>{`${userProfile.username}'s Profile`}</h2>
+                {id === loggedInUser.id.toString() ?
+                    "" :
+                    <button onClick={() => {
+                        followOrUnfollow(toggleFollow)
+                        setToggleFollow(!toggleFollow)
+                    }}>{toggleFollow ? "Following" : "Follow"}</button>}
                 {id === loggedInUser.id.toString() ? <button onClick={logoutTemp}>Logout</button> : ''}
                 <div id="userPostsContainer">
                     {usersPostsListed}
