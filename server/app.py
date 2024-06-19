@@ -108,7 +108,6 @@ api.add_resource(PostByUserId, '/posts/user/<int:user_id>')
 #checks for all people user is following
 #take the folowing_user_id from object to get followers
 class Following(Resource):
-    #tested with id param, not with session
     def get(self):
         following = Follow.query.filter(Follow.follower_user_id == session['user_id']).all()
         following_row_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
@@ -124,6 +123,7 @@ class Following(Resource):
                 follower_user_id = session['user_id']
             )
             db.session.add(new_follow)
+            db.session.commit()
             return make_response(new_follow.to_dict(), 201)
         except ValueError as v_error:
             return make_response({'errors': [str(v_error)]}, 400)
@@ -131,16 +131,32 @@ class Following(Resource):
         
 api.add_resource(Following, '/following')
 
+class FollowingById(Resource):
+    def get(self, id):
+        following = Follow.query.filter(Follow.follower_user_id == session['user_id']).all()
+        following_row_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
+        for user in following_row_list:
+            if user['following_user_id'] == id:
+                return make_response({"User is followed": "success"}, 200)
+        if User.query.filter_by(id=id).first():
+            return make_response({"User is not followed": "fail"}, 400)
+        return make_response({"error": "User not found"}, 404)    
+
+api.add_resource(FollowingById, '/following/<int:id>')
+
 class Unfollow(Resource):
     def delete(self, id):
-        follow = Follow.query.filter(Follow.id == id).first()
+        follow = Follow.query.filter_by(following_user_id=id, follower_user_id=session['user_id']).first()
+        
         if not follow:
-            response = {"error": "User is not following"}
+            response = {"error": "User is not following or the relationship does not exist"}
             return make_response(response, 404)
+
         db.session.delete(follow)
         db.session.commit()
+        
         return '', 204
-    
+
 api.add_resource(Unfollow, '/unfollow/<int:id>')
         
 
@@ -181,11 +197,6 @@ api.add_resource(FollowingPosts, '/following_posts')
 
 class CheckSession(Resource):
     def get(self):
-        # user = User.query.filter(User.id == session.get('user_id')).first()
-        # if user:
-        #     return make_response(user.to_dict(), 200)
-        # return make_response({'error': 'Unauthorized: Must login'}, 401)
-
         user_id = session.get('user_id')
         if user_id:
             user = db.session.get(User, user_id)
@@ -211,6 +222,11 @@ class SignUp(Resource):
             )
             user.password_hash = params.get('password')
             db.session.add(user)
+            db.session.commit()
+            user_BlogThat = User.query.filter_by(username="BlogThat").first()
+            follow_BlogThat = Follow(following_user_id = user_BlogThat.id,
+                follower_user_id = user.id)
+            db.session.add(follow_BlogThat)
             db.session.commit()
             session['user_id'] = user.id
             return make_response(user.to_dict(), 201)
