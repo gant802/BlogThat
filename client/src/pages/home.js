@@ -25,6 +25,7 @@ function Home(){
             <CreatePost posts={posts} 
             setPosts={setPosts}
             user={loggedInUser}/>
+            <div id="lineBreak"></div>
             <FeedContainer user={loggedInUser} setPosts={setPosts} posts={posts}/>
         </div>
     )
