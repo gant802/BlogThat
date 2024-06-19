@@ -5,7 +5,6 @@ import * as yup from 'yup';
 function CreatePost({ setPosts, posts, user }) {
 
     function handleFormSubmit(values) {
-        console.log(values);
         fetch('/posts', {
             method: 'POST',
             headers: {
@@ -15,8 +14,8 @@ function CreatePost({ setPosts, posts, user }) {
         }).then(resp => {
             if (resp.ok) {
                 resp.json().then(data => {
-                console.log(data)
                 setPosts([data, ...posts])
+
                 })
                 
             }
@@ -39,13 +38,12 @@ function CreatePost({ setPosts, posts, user }) {
                 onSubmit={handleFormSubmit}
             >
                 {(props) => {
-                    const { values: {content}, handleChange, handleSubmit, errors } = props
+                    const { values: {content},handleReset, handleChange, handleSubmit, errors } = props
                     return (<form id="createPostForm" onSubmit={handleSubmit}>
-                        <label>What's on your mind?</label>
-                        <input onChange={handleChange} value={content}
-                            type="text" name="content" />
+                        <textarea id="postInput" onChange={handleChange} value={content}
+                            type="text" name="content" placeholder="Dune 2 is the best movie of 2024..."/>
                         <div>
-                            <button type="submit">Create Post</button>
+                            <button id="createPostButton" type="submit">Create Post</button>
                         </div>
                     </form>)
                 }}

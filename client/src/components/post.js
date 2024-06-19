@@ -44,11 +44,11 @@ function Post({allPosts, data, user, setPosts}){
     
 
     const editPostButton = user.id === data.user.id ?
-    <button id="editPostButton" onClick={() => setEditToggle(!editToggle)}>Edit</button> :
+    <button className="editDeleteButton" onClick={() => setEditToggle(!editToggle)}>Edit</button> :
     "";
 
     const deletePostButton = user.id === data.user.id ?
-    <button id="deletePostButton" onClick={() => handleDeletePost()}>Delete</button> :
+    <button className="editDeleteButton" onClick={() => handleDeletePost()}>Delete</button> :
     "";
 
     const editPostSchema = yup.object().shape({
@@ -58,13 +58,13 @@ function Post({allPosts, data, user, setPosts}){
     return (
         <div className="postContainer">
             <div className="postHeaderContainer">
-                <p>{data.user.username}</p>
+                <p>{"@" + data.user.username}</p>
                 {editPostButton}
                 {deletePostButton}
                 <p>{data.created_at}</p>
             </div>
             <div className="postContentContainer">
-                {!editToggle ? <p>{data.content}</p> :
+                {!editToggle ? <p className="postText">{data.content}</p> :
                 <Formik
                 initialValues={{
                     content: data.content,

@@ -69,34 +69,40 @@ function Register({setUser}) {
                         },
                         handleChange, handleSubmit, errors } = props
                     return (<form className="loginSignupForm" onSubmit={handleSubmit}>
-                        <label>First Name: </label>
+                        <p>*required fields</p>
+                        <label>*First Name: </label>
                         <input onChange={handleChange} value={first_name}
                             type="text" name="first_name" />
+                        <p className="errorText">{errors.first_name}</p>
 
-                        <label>Last Name: </label>
+                        <label>*Last Name: </label>
                         <input onChange={handleChange} value={last_name}
                             type="text" name="last_name" />
+                        <p className="errorText">{errors.last_name}</p>
 
-                        <label>Username: </label>
+                        <label>*Username: </label>
                         <input onChange={handleChange} value={username}
                             type="text" name="username" />
-                        {errors.username}
+                        <p className="errorText">{errors.username}</p>
 
-                        <label>Password: </label>
+                        <label>*Password: </label>
                         <input onChange={handleChange} value={password}
                             type="text" name="password" />
+                        <p className="errorText">{errors.password}</p>
                         
-                        <label>Confirm Password: </label>
+                        <label>*Confirm Password: </label>
                         <input onChange={handleChange} value={password_confirmation}
                             type="text" name="password_confirmation" />
+                        <p className="errorText">{errors.password_confirmation}</p>
 
                         <label>Profile Picture URL: </label>
                         <input onChange={handleChange} value={profile_image}
                             type="text" name="profile_image" />
 
-                        <label>Email Address: </label>
+                        <label>*Email Address: </label>
                         <input onChange={handleChange} value={email}
                             type="email" name="email" />
+                        <p className="errorText">{errors.email}</p>
 
                         <label>Birthday: </label>
                         <input onChange={handleChange} value={birthday}
@@ -105,6 +111,7 @@ function Register({setUser}) {
                         <label>Phone Number: </label>
                         <input onChange={handleChange} value={phone_number}
                             type="text" name="phone_number" />
+                        <p className="errorText">{errors.phone_number}</p>
 
                         <button type="submit">Create Profile</button>
 

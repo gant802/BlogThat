@@ -78,7 +78,7 @@ function UserProfile() {
 
 
 
-    let usersPostsListed = posts === null ? <h2>User has no posts yet!</h2> : posts.map((post, index) => {
+    let usersPostsListed = posts === null ? <h2 className="noPostsText">User has no posts yet!</h2> : posts.map((post, index) => {
         return <Post key={index} allPosts={posts} setPosts={setPosts} user={loggedInUser} data={post} />
     })
 
@@ -87,17 +87,20 @@ function UserProfile() {
         <div>
             <NavBar />
             <div id="profileContainer">
-                <img src={userProfile.profile_image ?
+                <div className="profileInfo">
+                  <img className="userProfilePhoto" src={userProfile.profile_image ?
                     userProfile.profile_image :
                     "https://www.nevadahealthcenters.org/wp-content/uploads/2018/09/no-profile-picture.jpg"} alt="profile_photo" />
-                <h2>{`${userProfile.username}'s Profile`}</h2>
+                <h2 className="profileUsername">{`@${userProfile.username}`}</h2>
                 {id === loggedInUser.id.toString() ?
                     "" :
-                    <button onClick={() => {
+                    <button className="followButton" onClick={() => {
                         followOrUnfollow(toggleFollow)
                         setToggleFollow(!toggleFollow)
-                    }}>{toggleFollow ? "Following" : "Follow"}</button>}
-                {id === loggedInUser.id.toString() ? <button onClick={logoutTemp}>Logout</button> : ''}
+                    }}>{toggleFollow ? <span>Following &#10003;</span> : "Follow" }</button>}
+                {id === loggedInUser.id.toString() ? <button id="logoutButton" onClick={logoutTemp}>Logout</button> : ''}  
+                </div>
+                
                 <div id="userPostsContainer">
                     {usersPostsListed}
                 </div>

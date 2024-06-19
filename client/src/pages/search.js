@@ -39,7 +39,7 @@ function Search() {
             <div id="searchPageContainer">
                 <div id="searchBarContainer">
                     <input
-                    id="searchInput"
+                        id="searchInput"
                         type="text"
                         placeholder="Search for users by username..."
                         value={searchTerm}
@@ -55,19 +55,22 @@ function Search() {
                     <h2 onClick={() => setToggleFollows("showFollowing")}>Following</h2>
                     <h2 onClick={() => setToggleFollows("showFollowers")}>Followers</h2>
                 </div>
-                {toggleFollows == "search" ? filteredUsers.map((user, index) => (
-                    <UserNode key={index} user={user} />
-                )) :
-                    ""}
-                {toggleFollows == "showFollowers" ?
-                    userFollowers.map((user, index) => (
-                        <UserNode key={index} user={user} />
-                    )) : ""}
-                {toggleFollows == "showFollowing" ?
-                    userFollowing.map((user, index) => (
+                <div id="userNodeContainer">
+                    {toggleFollows == "search" ? filteredUsers.map((user, index) => (
                         <UserNode key={index} user={user} />
                     )) :
-                    ""}
+                        ""}
+                    {toggleFollows == "showFollowers" ?
+                        userFollowers.map((user, index) => (
+                            <UserNode key={index} user={user} />
+                        )) : ""}
+                    {toggleFollows == "showFollowing" ?
+                        userFollowing.map((user, index) => (
+                            <UserNode key={index} user={user} />
+                        )) :
+                        ""}
+                </div>
+
             </div>
 
         </div>
