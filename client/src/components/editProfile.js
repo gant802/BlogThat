@@ -1,10 +1,11 @@
-import React from "react";
+import React, {useState} from "react";
 import NavBar from "./navbar";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import * as yup from 'yup'
 
 function EditProfile() {
+    const [error, setError] = useState("")
     const navigate = useNavigate()
     const [loggedInUser, setLoggedInUser] = useOutletContext()
     console.log(loggedInUser)
@@ -36,7 +37,7 @@ function EditProfile() {
             }
             else{
                 res.json().then((error) => {
-                    console.log(error)
+                    setError(error)
                 })
             }
         })
@@ -152,6 +153,8 @@ function EditProfile() {
                             <input onChange={handleChange} value={phone_number}
                                 type="integer" name="phone_number" />
                             <p className="errorText">{errors.phone_number}</p>
+
+                            {error ? <p className="registerEditErrorMessage">{error.error}</p> : ""}
 
                             <div id="saveChangesDeleteContainer">
                                 <button id="saveChangesButton" type="submit">Save Changes</button>

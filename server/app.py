@@ -42,7 +42,7 @@ class UsersById(Resource):
         try:
             params = request.json
             check_username = User.query.filter(User.username == params.get('username')).first()
-            if check_username:
+            if check_username and check_username.id != id:
                 return make_response({"error": "Username already exists"}, 401)
             for attr in params:
                 setattr(user, attr, params[attr])

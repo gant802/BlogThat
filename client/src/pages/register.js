@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
-import * as yup from 'yup'
+import * as yup from 'yup';
 import { useNavigate } from "react-router-dom";
 
 function Register({ setUser }) {
     const navigate = useNavigate()
+    const [error, setError] = useState("")
 
     //? Function to handle registering as a user
     function handleSignupSubmit(values) {
@@ -15,22 +16,22 @@ function Register({ setUser }) {
             },
             body: JSON.stringify(values)
         })
-        .then(resp => {
-            if (resp.ok) {
-                resp.json().then(user => {
-                    setUser(user);
-                    navigate('/');
-                });
-            }
-            else{
-                resp.json().then((error) => {
-                    console.log(error)
-                })
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
+            .then(resp => {
+                if (resp.ok) {
+                    resp.json().then(user => {
+                        setUser(user);
+                        navigate('/');
+                    });
+                }
+                else {
+                    resp.json().then((error) => {
+                        setError(error)
+                    })
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     // Schema to validate user input for signing up
@@ -65,7 +66,6 @@ function Register({ setUser }) {
                 onSubmit={handleSignupSubmit}
             >
                 {(props) => {
-                    console.log(props)
                     const { values: {
                         first_name,
                         last_name,
@@ -123,7 +123,10 @@ function Register({ setUser }) {
                             type="integer" name="phone_number" />
                         <p className="errorText">{errors.phone_number}</p>
 
+                        {error ? <p className="registerEditErrorMessage">{error.error}</p> : ""}
+
                         <button type="submit">Create Profile</button>
+
 
                     </form>)
                 }}
