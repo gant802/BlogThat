@@ -3,18 +3,22 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response, session
+from dotenv import load_dotenv
+from flask import request, make_response, session, render_template
 from flask_restful import Resource
 from models import User, Post, Follow, Comment
 from config import app, db, api, bcrypt
+
+load_dotenv()
 
 # Local imports
 from config import app, db, api
 # Add your model imports
 
 @app.route('/')
-def index():
-    return '<h1>Project Server</h1>'
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
 
 #returns list of all Users
 class Users(Resource):
