@@ -7,8 +7,6 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from config import db, bcrypt
 
-# Models go here!
-
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
@@ -24,6 +22,7 @@ class User(db.Model, SerializerMixin):
     birthday = db.Column(db.String, nullable=True)
     profile_image = db.Column(db.String, nullable=True)
 
+    #encrypts password
     @property
     def password_hash(self):
         return self._password_hash
@@ -32,16 +31,18 @@ class User(db.Model, SerializerMixin):
     def password_hash(self, password):
         self._password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
     
-    # 6b. Create an authenticate method that uses bcyrpt to verify the password against the hash in the DB with bcrypt.check_password_hash
-
+    #Create an authenticate method that uses bcyrpt to verify the password against the hash in the DB with bcrypt.check_password_hash
     def authenticate(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
     
+    #one user - many posts, one user- many comments
+    #many users - many following relationships
     posts = db.relationship('Post', back_populates='user', cascade='all, delete-orphan')
     comments = db.relationship('Comment', back_populates='user', cascade='all, delete-orphan')
     following = db.relationship('Follow', foreign_keys='Follow.follower_user_id', back_populates='follower', cascade='all, delete-orphan')
     followers = db.relationship('Follow', foreign_keys='Follow.following_user_id', back_populates='following', cascade='all, delete-orphan')
 
+    #method to show posts of who a user is following as well as their own
     @property
     def feed(self):
         followed_users_ids = [follow.following_user_id for follow in self.following]
@@ -86,12 +87,12 @@ class Post(db.Model, SerializerMixin):
 
 
 
-
+    #one post - one user
+    #one post - many comments
     user = db.relationship('User', back_populates='posts')
     comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
-  
+    
     @property
-    #call using Post.username
     def username(self):
        return self.user.username
 
@@ -124,6 +125,7 @@ class Follow(db.Model, SerializerMixin):
     following = db.relationship('User', foreign_keys=[following_user_id], back_populates='followers')
     follower = db.relationship('User', foreign_keys=[follower_user_id], back_populates='following')
 
+    #makes sure user isn't following themselves or a relationship is duplicated
     @validates('following_user_id', 'follower_user_id')
     def validate_not_following_self(self, key, value):
         if key == 'following_user_id':
@@ -160,6 +162,7 @@ class Comment(db.Model, SerializerMixin):
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
+    #one comment - one post, one comment - one user
     post = db.relationship("Post", back_populates="comments")
     user = db.relationship("User", back_populates="comments")
 

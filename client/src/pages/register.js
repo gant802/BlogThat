@@ -21,8 +21,11 @@ function Register({ setUser }) {
                     setUser(user);
                     navigate('/');
                 });
-            } else {
-                console.log(resp)
+            }
+            else{
+                resp.json().then((error) => {
+                    console.log(error)
+                })
             }
         })
         .catch(error => {
