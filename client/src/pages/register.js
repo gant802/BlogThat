@@ -19,7 +19,6 @@ function Register({setUser}) {
                    setUser(user) 
                    navigate('/')
                 })
-                
             }
         })
         
@@ -110,7 +109,7 @@ function Register({setUser}) {
                         
                         <label>Phone Number: </label>
                         <input onChange={handleChange} value={phone_number}
-                            type="text" name="phone_number" />
+                            type="integer" name="phone_number" />
                         <p className="errorText">{errors.phone_number}</p>
 
                         <button type="submit">Create Profile</button>
