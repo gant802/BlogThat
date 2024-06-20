@@ -6,6 +6,7 @@ import Home from "./pages/home";
 import ReactDOM from 'react-dom/client';
 import Search from "./pages/search";
 import UserProfile from "./pages/userProfile";
+import EditProfile from "./components/editProfile";
 
 // Frontend paths to render different pages of the application
 const routes = [
@@ -24,6 +25,10 @@ const routes = [
             {
                 path: "user/:id",
                 element: <UserProfile />
+            },
+            {
+                path: "editProfile/:id",
+                element: <EditProfile />
             }
         ]
     },

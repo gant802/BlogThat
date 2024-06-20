@@ -59,7 +59,7 @@ function Login({ setUser }) {
                 {(props) => {
                     const { values: { username, password, password_confirmation }, handleChange, handleSubmit, errors } = props
                     return (
-                        <form className="loginSignupForm" onSubmit={handleSubmit}>
+                        <form className="loginSignupEditForm" onSubmit={handleSubmit}>
                             <label htmlFor="username">Username: </label>
                             <input id="username" onChange={handleChange} value={username}
                                 type="text" name="username" />
