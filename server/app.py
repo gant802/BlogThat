@@ -3,13 +3,13 @@
 # Standard library imports
 
 # Remote library imports
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from flask import request, make_response, session, render_template
 from flask_restful import Resource
 from models import User, Post, Follow, Comment
 from config import app, db, api, bcrypt
 
-load_dotenv()
+# load_dotenv()
 
 # Local imports
 from config import app, db, api
