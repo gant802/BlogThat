@@ -76,6 +76,11 @@ body {
   color: red;
 }
 
+.registerEditErrorMessage{
+  color: red;
+  text-align: center;
+}
+
 /*---- Navbar -----*/
 #navbarContainer{
   margin: 0;
