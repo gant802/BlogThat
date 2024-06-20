@@ -11,8 +11,7 @@ function Search() {
     const [searchTerm, setSearchTerm] = useState('');
     const [toggleFollows, setToggleFollows] = useState("search");
 
-    console.log(toggleFollows)
-
+    // Sets all users, who user is following and who user follows in there own states
     useEffect(() => {
         fetch('/users')
             .then(response => response.json())
@@ -25,11 +24,12 @@ function Search() {
             .then(data => setUserFollowers(data))
     }, [])
 
-
+    // Search logic to display users during search
     let filteredUsers = allUsers.filter(user =>
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // Does not show filtered users based on search if the input is an empty string
     filteredUsers = searchTerm === '' ? [] : filteredUsers;
 
 
@@ -37,6 +37,7 @@ function Search() {
         <div>
             <NavBar />
             <div id="searchPageContainer">
+
                 <div id="searchBarContainer">
                     <input
                         id="searchInput"
@@ -55,16 +56,17 @@ function Search() {
                     <h2 onClick={() => setToggleFollows("showFollowing")}>Following</h2>
                     <h2 onClick={() => setToggleFollows("showFollowers")}>Followers</h2>
                 </div>
+
                 <div id="userNodeContainer">
-                    {toggleFollows == "search" ? filteredUsers.map((user, index) => (
+                    {toggleFollows === "search" ? filteredUsers.map((user, index) => (
                         <UserNode key={index} user={user} />
                     )) :
                         ""}
-                    {toggleFollows == "showFollowers" ?
+                    {toggleFollows === "showFollowers" ?
                         userFollowers.map((user, index) => (
                             <UserNode key={index} user={user} />
                         )) : ""}
-                    {toggleFollows == "showFollowing" ?
+                    {toggleFollows === "showFollowing" ?
                         userFollowing.map((user, index) => (
                             <UserNode key={index} user={user} />
                         )) :
@@ -72,7 +74,6 @@ function Search() {
                 </div>
 
             </div>
-
         </div>
     )
 }

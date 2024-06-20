@@ -9,6 +9,7 @@ function UserProfile() {
     const [toggleFollow, setToggleFollow] = useState(false)
     const { id } = useParams()
 
+    // Sets user profile and posts based on the id parameter endpoint
     useEffect(() => {
         fetch(`/users/${id}`)
             .then(response => response.json())
@@ -27,22 +28,20 @@ function UserProfile() {
                     return console.log("no posts found")
                 }
             })
-
-
-
     }, [id])
 
+    // If you are on a non-user profile, this determines if the user is following them of not
     useEffect(() => {
         fetch(`/following/${id}`)
             .then(res => {
                 if (res.ok) {
-                    console.log("res.ok")
                     setToggleFollow(true)
                 }
             })
     }, [])
 
-    function logoutTemp() {
+    //? Function to log user out
+    function logout() {
         fetch('/logout', {
             method: 'DELETE'
         }).then(resp => {
@@ -52,8 +51,9 @@ function UserProfile() {
         })
     }
 
-    function followOrUnfollow(boolean){
-        if(boolean){
+    //? Function that allows you to follow the person who's profile you're on
+    function followOrUnfollow(boolean) {
+        if (boolean) {
             fetch(`/unfollow/${id}`, {
                 method: 'DELETE'
             }).then(resp => {
@@ -65,19 +65,20 @@ function UserProfile() {
             fetch(`/following`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ "user_id": id
-                 })
+                body: JSON.stringify({
+                    "user_id": id
+                })
             }).then(resp => resp.json())
-            .then(data => {
-                setToggleFollow(true)
-            })
+                .then(data => {
+                    setToggleFollow(true)
+                })
         }
     }
 
 
 
 
-
+    // If there is post to diplay then it will display them but will show "User has no posts" otherwise
     let usersPostsListed = posts === null ? <h2 className="noPostsText">User has no posts yet!</h2> : posts.map((post, index) => {
         return <Post key={index} allPosts={posts} setPosts={setPosts} user={loggedInUser} data={post} />
     })
@@ -87,20 +88,21 @@ function UserProfile() {
         <div>
             <NavBar />
             <div id="profileContainer">
-                <div className="profileInfo">
-                  <img className="userProfilePhoto" src={userProfile.profile_image ?
-                    userProfile.profile_image :
-                    "https://www.nevadahealthcenters.org/wp-content/uploads/2018/09/no-profile-picture.jpg"} alt="profile_photo" />
-                <h2 className="profileUsername">{`@${userProfile.username}`}</h2>
-                {id === loggedInUser.id.toString() ?
-                    "" :
-                    <button className="followButton" onClick={() => {
-                        followOrUnfollow(toggleFollow)
-                        setToggleFollow(!toggleFollow)
-                    }}>{toggleFollow ? <span>Following &#10003;</span> : "Follow" }</button>}
-                {id === loggedInUser.id.toString() ? <button id="logoutButton" onClick={logoutTemp}>Logout</button> : ''}  
-                </div>
                 
+                <div className="profileInfo">
+                    <img className="userProfilePhoto" src={userProfile.profile_image ?
+                        userProfile.profile_image :
+                        "https://www.nevadahealthcenters.org/wp-content/uploads/2018/09/no-profile-picture.jpg"} alt="profile_photo" />
+                    <h2 className="profileUsername">{`@${userProfile.username}`}</h2>
+                    {id === loggedInUser.id.toString() ?
+                        "" :
+                        <button className="followButton" onClick={() => {
+                            followOrUnfollow(toggleFollow)
+                            setToggleFollow(!toggleFollow)
+                        }}>{toggleFollow ? <span>Following &#10003;</span> : "Follow"}</button>}
+                    {id === loggedInUser.id.toString() ? <button id="logoutButton" onClick={logout}>Logout</button> : ''}
+                </div>
+
                 <div id="userPostsContainer">
                     {usersPostsListed}
                 </div>
