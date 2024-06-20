@@ -5,15 +5,16 @@ import CreatePost from "../components/createPost";
 import { useOutletContext } from "react-router-dom";
 
 function Home() {
-    const [loggedInUser, setLoggedInUser, posts, setPosts] = useOutletContext()
+    const [loggedInUser] = useOutletContext()
     const [toggleHome, setToggleHome] = useState(true)
+    const [feed, setFeed] = useState([])
 
     // Fetches the users posts to render to there feed(as well as the user's posts)
     useEffect(() => {
         fetch('/following_posts')
             .then(response => response.json())
             .then(data => {
-                setPosts(data)
+                setFeed(data)
             })
 
     }, [toggleHome])
@@ -23,12 +24,12 @@ function Home() {
         <div>
             <NavBar toggleHome={toggleHome} setToggleHome={setToggleHome} />
 
-            <CreatePost posts={posts}
-                setPosts={setPosts}
+            <CreatePost posts={feed}
+                setPosts={setFeed}
                 user={loggedInUser} />
                 
             <div id="lineBreak"></div>
-            <FeedContainer user={loggedInUser} setPosts={setPosts} posts={posts} />
+            <FeedContainer user={loggedInUser} setPosts={setFeed} posts={feed} />
         </div>
     )
 }

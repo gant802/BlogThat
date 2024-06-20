@@ -4,7 +4,6 @@ import { Outlet } from "react-router-dom";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null)
-  const [posts, setPosts] = useState([]);
 
   // Checks if a user is already logged in based on if there is a user_id cookie in the browser
   useEffect(() => {
@@ -21,7 +20,7 @@ function App() {
     <div id="body">
       {
         loggedInUser ?
-          <Outlet context={[loggedInUser, setLoggedInUser, posts, setPosts]} /> :
+          <Outlet context={[loggedInUser, setLoggedInUser]} /> :
           <Login setUser={setLoggedInUser} />
       }
     </div>

@@ -14,15 +14,20 @@ function Register({ setUser }) {
                 "Content-Type": 'application/json'
             },
             body: JSON.stringify(values)
-        }).then(resp => {
+        })
+        .then(resp => {
             if (resp.ok) {
                 resp.json().then(user => {
-                    setUser(user)
-                    navigate('/')
-                })
+                    setUser(user);
+                    navigate('/');
+                });
+            } else {
+                console.log(resp)
             }
         })
-
+        .catch(error => {
+            console.log(error);
+        });
     }
 
     // Schema to validate user input for signing up
@@ -70,7 +75,7 @@ function Register({ setUser }) {
                         phone_number
                     },
                         handleChange, handleSubmit, errors } = props
-                    return (<form className="loginSignupForm" onSubmit={handleSubmit}>
+                    return (<form className="loginSignupEditForm" onSubmit={handleSubmit}>
                         <p>*required fields</p>
                         <label>*First Name: </label>
                         <input onChange={handleChange} value={first_name}
