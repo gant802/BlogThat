@@ -12,7 +12,7 @@ from config import db, bcrypt
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    serialize_rules = ("-posts", "-following", "-followers")
+    serialize_rules = ("-posts", "-following", "-followers", "-comments.user")
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable = False)
@@ -38,13 +38,16 @@ class User(db.Model, SerializerMixin):
         return bcrypt.check_password_hash(self.password_hash, password)
     
     posts = db.relationship('Post', back_populates='user', cascade='all, delete-orphan')
+    comments = db.relationship('Comment', back_populates='user', cascade='all, delete-orphan')
     following = db.relationship('Follow', foreign_keys='Follow.follower_user_id', back_populates='follower', cascade='all, delete-orphan')
     followers = db.relationship('Follow', foreign_keys='Follow.following_user_id', back_populates='following', cascade='all, delete-orphan')
 
     @property
-    def following_posts(self):
+    def feed(self):
         followed_users_ids = [follow.following_user_id for follow in self.following]
         posts = Post.query.filter(Post.user_id.in_(followed_users_ids)).all()
+        user_posts = Post.query.filter(Post.user_id == self.id).all()
+        posts.extend(user_posts)
         return posts
     
     @validates('email')
@@ -72,16 +75,19 @@ class User(db.Model, SerializerMixin):
 
 class Post(db.Model, SerializerMixin):
     __tablename__ = 'posts'
+
+    serialize_rules = ("-comments.post",)
   
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
 
 
     user = db.relationship('User', back_populates='posts')
+    comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
   
     @property
     #call using Post.username
@@ -142,3 +148,18 @@ class Follow(db.Model, SerializerMixin):
 
         return value
     
+class Comment(db.Model, SerializerMixin):
+    __tablename__ = 'comments'
+
+    serialize_rules = ("-post","-user")
+
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.String, nullable=False)
+    created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    post = db.relationship("Post", back_populates="comments")
+    user = db.relationship("User", back_populates="comments")
+
+

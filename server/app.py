@@ -5,7 +5,7 @@
 # Remote library imports
 from flask import request, make_response, session
 from flask_restful import Resource
-from models import User, Post, Follow
+from models import User, Post, Follow, Comment
 from config import app, db, api, bcrypt
 
 # Local imports
@@ -157,13 +157,7 @@ class Unfollow(Resource):
         
         return '', 204
 
-api.add_resource(Unfollow, '/unfollow/<int:id>')
-        
-
-
-
-
-
+api.add_resource(Unfollow, '/unfollow/<int:id>')      
 
 #take the follower_user_id from object to get followers
 class FollowersById(Resource):
@@ -184,7 +178,7 @@ class FollowingPosts(Resource):
         if not user:
             return make_response({'error': 'User not found'}, 404)
         
-        posts = user.following_posts
+        posts = user.feed
         posts_list = [post.to_dict() for post in posts]
         
         return make_response(posts_list, 200)
@@ -192,6 +186,71 @@ class FollowingPosts(Resource):
 api.add_resource(FollowingPosts, '/following_posts')
 
     
+class PostComments(Resource):
+    def get(self, id):
+        comments = Comment.query.filter(Comment.post_id == id).all()
+        comment_list = [comment.to_dict() for comment in comments]
+        return make_response(comment_list, 200)
+api.add_resource(PostComments, '/comments/post/<int:id>')
+
+class UserComments(Resource):
+    def get(self, id):
+        comments = Comment.query.filter(Comment.user_id == id).all()
+        comment_list = [comment.to_dict() for comment in comments]
+        return make_response(comment_list, 200)
+api.add_resource(UserComments, '/comments/user/<int:id>')
+
+class PostAComment(Resource):
+    def post(self, post_id):
+        try:
+            params = request.json
+            new_comment = Comment(
+                comment = params.get('comment'),
+                post_id = post_id,
+                user_id = session['user_id']
+            )
+            db.session.add(new_comment)
+            db.session.commit()
+            return make_response(new_comment.to_dict(), 201)
+        except ValueError as v_error:
+            return make_response({'errors': [str(v_error)]}, 400)    
+api.add_resource(PostAComment, '/comments/<int:post_id>')
+
+
+class CommentById(Resource):
+    def get(self, id):
+        comment = Comment.query.filter(Comment.id == id).first()
+        if not comment:
+            return make_response({"error": "Comment not found"}, 404)
+        return make_response(comment.to_dict(), 200)
+    def patch(self, id):
+        comment = Comment.query.filter(Comment.id == id).first()
+        if not comment:
+            return make_response({"error": "Comment not found"}, 404)
+        
+        try:
+            params = request.json
+            for attr in params:
+                setattr(comment, attr, params[attr])
+            db.session.add(comment)
+            db.session.commit()
+            comment_dict = comment.to_dict()
+            return make_response(comment_dict, 202)
+        
+        except ValueError as v_error:
+            return make_response({'errors': str(v_error)}, 400)
+    
+    def delete(self,id):
+        comment = Comment.query.filter(Comment.id == id).first()
+        if not comment:
+            response = {"error": "Comment not found"}
+            return make_response(response, 404)
+        db.session.delete(comment)
+        db.session.commit()
+
+        return '', 204
+
+api.add_resource(CommentById, '/comments/<int:id>')
 
     
 
