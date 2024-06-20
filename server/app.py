@@ -32,6 +32,33 @@ class UsersById(Resource):
             return make_response(user.to_dict(), 200)
         else:
             return make_response({'error': 'User not found'}, 404)
+        
+    def patch(self, id):
+        user = User.query.filter_by(id=id).first()
+        if not user:
+            return make_response({"error": "User not found"}, 404)
+        try:
+            params = request.json
+            for attr in params:
+                setattr(user, attr, params[attr])
+            db.session.add(user)
+            db.session.commit()
+
+            user_dict = user.to_dict()
+            return make_response(user_dict, 202)
+        
+        except ValueError as v_error:
+            return make_response({'errors': str(v_error)}, 400)
+        
+    def delete(self, id):
+        user = User.query.filter_by(id=id).first()
+        if not user:
+            response = {"error": "User not found"}
+            return make_response(response, 404)
+        db.session.delete(user)
+        db.session.commit()
+
+        return '', 204
 
 api.add_resource(UsersById, '/users/<int:id>')
 
