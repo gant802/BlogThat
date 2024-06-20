@@ -167,6 +167,11 @@ body {
   color: #fff;
   border: none;
   cursor: pointer;
+  border-radius: 20px;
+}
+
+#createPostButton:hover {
+  background-color: #004d9e;
 }
 
 #lineBreak{
@@ -180,7 +185,7 @@ body {
   border: 1px solid black;
   border-radius: 20px;
   width: 40%;
-  height: 150px;
+  height: auto;
   margin: 10px auto;
   background-color: #fff;
 }
@@ -205,6 +210,71 @@ body {
 .postText{
   text-align: center;
   margin-top: 30px;
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.commentPostDivider{
+  border-top: 1px solid black;
+  width: 95%;
+  margin: 0 auto;
+}
+
+/*--- Comments ----*/
+.seeComments{
+  background-color: #fff;
+  color: #007bff;
+  border: none;
+  cursor: pointer;
+  border-radius: 20px;
+  margin: 5px 0px 5px 5px;
+}
+
+.seeComments:hover{
+  background-color: #007bff;
+  color: #fff;
+}
+
+.commentsAndFormContainer{
+  display: flex;
+  justify-content: space-around;
+}
+
+.commentFormContainer, .commentsContainer{
+  /* border: 1px solid black; */
+  width: 45%;
+}
+
+.commentFormContainer{
+  text-align: center;
+  padding-top: 10px;
+}
+
+.commentUsername, .commentContent{
+  /* border: 1px solid black; */
+  margin: 0;
+}
+
+.commentUsername{
+  color: #0069d9;
+}
+
+.singleCommentContainer{
+  padding-bottom: 7px;
+}
+
+.addCommentButton{
+  background-color: #fff;
+  color: #007bff;
+  border: none;
+  cursor: pointer;
+  border-radius: 20px;
+  margin: 5px 0px 5px 5px;
+}
+
+.addCommentButton:hover{
+  background-color: #007bff;
+  color: #fff;
 }
 
 /*---- User Profile ----*/

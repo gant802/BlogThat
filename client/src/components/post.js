@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 import { Formik } from "formik";
 import * as yup from 'yup';
+import Comments from "./comments";
 
 function Post({allPosts, data, user, setPosts}){
     const [editToggle, setEditToggle] = useState(false)
-
+    const [toggleComments, setToggleComments] = useState(false)
 
     function handleEditPost(values){
         fetch(`http://127.0.0.1:5555/posts/${data.id}`, {
@@ -84,6 +85,9 @@ function Post({allPosts, data, user, setPosts}){
                 }}
             </Formik>}
             </div>
+            <div className="commentPostDivider"></div>
+            <button className="seeComments" onClick={() => setToggleComments(!toggleComments)}>{toggleComments ? "Hide Comments" : "See Comments"}</button>
+            {toggleComments ? <Comments user={user} postData={data}/> : ""}
         </div>
     )
 }
