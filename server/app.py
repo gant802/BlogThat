@@ -16,8 +16,8 @@ from config import app, db, api
 def index():
     return '<h1>Project Server</h1>'
 
+#returns list of all Users
 class Users(Resource):
-
     def get(self):
         users = User.query.all()
         users_list = [user.to_dict() for user in users]
@@ -26,19 +26,24 @@ class Users(Resource):
 api.add_resource(Users, '/users')
 
 class UsersById(Resource):
+    #returns specific User
     def get(self, id):
         user = User.query.filter_by(id=id).first()
         if user:
             return make_response(user.to_dict(), 200)
         else:
             return make_response({'error': 'User not found'}, 404)
-        
+    
+    #edits specific User
     def patch(self, id):
         user = User.query.filter_by(id=id).first()
         if not user:
             return make_response({"error": "User not found"}, 404)
         try:
             params = request.json
+            check_username = User.query.filter(User.username == params.get('username')).first()
+            if check_username:
+                return make_response({"error": "Username already exists"}, 401)
             for attr in params:
                 setattr(user, attr, params[attr])
             db.session.add(user)
@@ -49,7 +54,8 @@ class UsersById(Resource):
         
         except ValueError as v_error:
             return make_response({'errors': str(v_error)}, 400)
-        
+
+    #deletes a user  
     def delete(self, id):
         user = User.query.filter_by(id=id).first()
         if not user:
@@ -63,12 +69,12 @@ class UsersById(Resource):
 api.add_resource(UsersById, '/users/<int:id>')
 
 class Posts(Resource):
+    #returns all posts
     def get(self):
        posts = [post.to_dict() for post in Post.query.all()]
        return make_response(posts, 200)
 
-
-#needs session testing 
+    #creates a new post
     def post(self):
         try:
             params = request.json
@@ -81,18 +87,18 @@ class Posts(Resource):
         except ValueError as v_error:
             return make_response({'errors': [str(v_error)]}, 400)
 
-  
 api.add_resource(Posts, '/posts')
 
 
 class PostById(Resource):
-
+    #returns a specific post
     def get(self, id):
         post = Post.query.filter(Post.id == id).first()
         if not post:
             return make_response({"error": "Post not found"}, 404)
         return make_response(post.to_dict(), 200)
     
+    #edits a post
     def patch(self, id):
         post = Post.query.filter(Post.id == id).first()
         if not post:
@@ -110,7 +116,8 @@ class PostById(Resource):
         
         except ValueError as v_error:
             return make_response({'errors': str(v_error)}, 400)
-        
+
+    #deletes a post    
     def delete(self, id):
         post = Post.query.filter(Post.id == id).first()
         if not post:
@@ -124,6 +131,7 @@ class PostById(Resource):
 api.add_resource(PostById, '/posts/<int:id>')
 
 class PostByUserId(Resource):
+    #returns a post of a specific User
     def get(self, user_id):
         posts = Post.query.filter(Post.user_id == user_id).all()
         if not posts:
@@ -132,16 +140,15 @@ class PostByUserId(Resource):
     
 api.add_resource(PostByUserId, '/posts/user/<int:user_id>')
 
-#checks for all people user is following
-#take the folowing_user_id from object to get followers
 class Following(Resource):
+    #returns all users that the user is following
     def get(self):
         following = Follow.query.filter(Follow.follower_user_id == session['user_id']).all()
         following_row_list = [follow.to_dict(rules=('-follower','-following')) for follow in following]
         following_list = [User.query.get(following["following_user_id"]).to_dict() for following in following_row_list]
         return make_response(following_list, 200)
     
-    #needs session testing
+    #creates a new following relationship
     def post(self):
         try:
             params = request.json
@@ -158,6 +165,7 @@ class Following(Resource):
         
 api.add_resource(Following, '/following')
 
+#returns list of who user is following
 class FollowingById(Resource):
     def get(self, id):
         following = Follow.query.filter(Follow.follower_user_id == session['user_id']).all()
@@ -171,6 +179,7 @@ class FollowingById(Resource):
 
 api.add_resource(FollowingById, '/following/<int:id>')
 
+#deletes a following relationship
 class Unfollow(Resource):
     def delete(self, id):
         follow = Follow.query.filter_by(following_user_id=id, follower_user_id=session['user_id']).first()
@@ -186,7 +195,7 @@ class Unfollow(Resource):
 
 api.add_resource(Unfollow, '/unfollow/<int:id>')      
 
-#take the follower_user_id from object to get followers
+#returns a list of who follows the user
 class FollowersById(Resource):
     def get(self, id):
         followers = Follow.query.filter(Follow.following_user_id == id).all()
@@ -195,6 +204,7 @@ class FollowersById(Resource):
         return make_response(followers_list, 200)
 api.add_resource(FollowersById, '/followers/<int:id>')
 
+#returns a list of posts of who the user is following
 class FollowingPosts(Resource):
     def get(self):
         user_id = session.get('user_id')
@@ -212,24 +222,26 @@ class FollowingPosts(Resource):
 
 api.add_resource(FollowingPosts, '/following_posts')
 
-    
+#returns comments of a specific post   
 class PostComments(Resource):
     def get(self, id):
         comments = Comment.query.filter(Comment.post_id == id).all()
         sorted_comments = sorted(comments, key=lambda comment: comment.created_at)
         comment_list = [comment.to_dict() for comment in sorted_comments]
         
-        
         return make_response(comment_list, 200)
 api.add_resource(PostComments, '/comments/post/<int:id>')
 
+#returns comments of a specific User
 class UserComments(Resource):
     def get(self, id):
         comments = Comment.query.filter(Comment.user_id == id).all()
         comment_list = [comment.to_dict() for comment in comments]
+
         return make_response(comment_list, 200)
 api.add_resource(UserComments, '/comments/user/<int:id>')
 
+#creates a comment on an existing post
 class PostAComment(Resource):
     def post(self, post_id):
         try:
@@ -248,11 +260,14 @@ api.add_resource(PostAComment, '/comment/<int:post_id>')
 
 
 class CommentById(Resource):
+    #returns a specific comment
     def get(self, id):
         comment = Comment.query.filter(Comment.id == id).first()
         if not comment:
             return make_response({"error": "Comment not found"}, 404)
         return make_response(comment.to_dict(), 200)
+    
+    #edits a comment
     def patch(self, id):
         comment = Comment.query.filter(Comment.id == id).first()
         if not comment:
@@ -270,6 +285,7 @@ class CommentById(Resource):
         except ValueError as v_error:
             return make_response({'errors': str(v_error)}, 400)
     
+    #deletes a comment
     def delete(self,id):
         comment = Comment.query.filter(Comment.id == id).first()
         if not comment:
@@ -283,7 +299,7 @@ class CommentById(Resource):
 api.add_resource(CommentById, '/comments/<int:id>')
 
     
-
+#checks to see if user is logged in
 class CheckSession(Resource):
     def get(self):
         user_id = session.get('user_id')
@@ -295,13 +311,15 @@ class CheckSession(Resource):
 
 api.add_resource(CheckSession, '/check_session')
 
+#creates a new_user. automatically follows User "BlogThat"
 class SignUp(Resource):
-
     def post(self):
         params = request.json
+        username=params.get('username')
+        if User.query.filter_by(username=username).first():
+            return make_response({"error": "Username already exists"}, 401)
         try:
             user = User(
-                username=params.get('username'),
                 first_name=params.get('first_name'),
                 last_name=params.get('last_name'),
                 email=params.get('email'),
@@ -325,6 +343,7 @@ class SignUp(Resource):
 api.add_resource(SignUp, '/signup')
 
 
+#user login
 class Login(Resource):
     def post(self):
         params = request.json
@@ -340,6 +359,7 @@ class Login(Resource):
 
 api.add_resource(Login, '/login')
 
+#user logout
 class Logout(Resource):
     def delete(self):
         session['user_id'] = None

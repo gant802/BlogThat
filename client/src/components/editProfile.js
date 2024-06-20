@@ -24,10 +24,21 @@ function EditProfile() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(valuesCopy)
-        }).then(res => res.json())
+        }).then(res => {
+            if (res.ok){
+
+
+        res.json()
         .then(data => {
             setLoggedInUser(() => data)
             navigate(`/user/${loggedInUser.id}`)
+                })
+            }
+            else{
+                res.json().then((error) => {
+                    console.log(error)
+                })
+            }
         })
     }
 
