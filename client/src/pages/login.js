@@ -11,6 +11,7 @@ function Login({ setUser }) {
     const [error, setError] = useState("")
     const navigate = useNavigate()
 
+    //? Function to handle a user loggin in
     function handleLogin(values) {
         fetch('/login', {
             method: 'POST',
@@ -45,7 +46,8 @@ function Login({ setUser }) {
 
     return (
         <div className="loginSignupContainer">
-            <h1>{!toggleForm ? "Login" : "Create Your Account"}</h1> 
+            <h1>{!toggleForm ? "Login" : "Create Your Account"}</h1>
+
             {!toggleForm ? <Formik
                 initialValues={{
                     username: '',
@@ -77,8 +79,10 @@ function Login({ setUser }) {
             </Formik>
                 :
                 <Register setUser={setUser} />}
+
             {!toggleForm ? <p id="loginErrorText">{error.error}</p> : ""}
             {!toggleForm ? <p id="newUserText">New User?</p> : ""}
+            
             <p id="toggleLoginCreateButton" onClick={() => setToggleForm(!toggleForm)}>{!toggleForm ? "Create an Account" : "Go back to Login"}</p>
         </div>
     )

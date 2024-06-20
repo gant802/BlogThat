@@ -3,10 +3,11 @@ import { Formik } from "formik";
 import * as yup from 'yup'
 import { useNavigate } from "react-router-dom";
 
-function Register({setUser}) {
-   const navigate = useNavigate()
+function Register({ setUser }) {
+    const navigate = useNavigate()
 
-    function handleFormSubmit(values) {
+    //? Function to handle registering as a user
+    function handleSignupSubmit(values) {
         fetch('/signup', {
             method: 'POST',
             headers: {
@@ -16,14 +17,15 @@ function Register({setUser}) {
         }).then(resp => {
             if (resp.ok) {
                 resp.json().then(user => {
-                   setUser(user) 
-                   navigate('/')
+                    setUser(user)
+                    navigate('/')
                 })
             }
         })
-        
+
     }
 
+    // Schema to validate user input for signing up
     let createProfileSchema = yup.object().shape({
         first_name: yup.string().required(),
         last_name: yup.string().required(),
@@ -38,6 +40,7 @@ function Register({setUser}) {
 
     return (
         <div className="loginSignupContainerr">
+
             <Formik
                 initialValues={{
                     first_name: "",
@@ -51,11 +54,11 @@ function Register({setUser}) {
                     phone_number: ""
                 }}
                 validationSchema={createProfileSchema}
-                onSubmit={handleFormSubmit}
+                onSubmit={handleSignupSubmit}
             >
                 {(props) => {
                     console.log(props)
-                    const { values: { 
+                    const { values: {
                         first_name,
                         last_name,
                         username,
@@ -65,7 +68,7 @@ function Register({setUser}) {
                         email,
                         birthday,
                         phone_number
-                        },
+                    },
                         handleChange, handleSubmit, errors } = props
                     return (<form className="loginSignupForm" onSubmit={handleSubmit}>
                         <p>*required fields</p>
@@ -88,7 +91,7 @@ function Register({setUser}) {
                         <input onChange={handleChange} value={password}
                             type="text" name="password" />
                         <p className="errorText">{errors.password}</p>
-                        
+
                         <label>*Confirm Password: </label>
                         <input onChange={handleChange} value={password_confirmation}
                             type="text" name="password_confirmation" />
@@ -106,7 +109,7 @@ function Register({setUser}) {
                         <label>Birthday: </label>
                         <input onChange={handleChange} value={birthday}
                             type="date" name="birthday" />
-                        
+
                         <label>Phone Number: </label>
                         <input onChange={handleChange} value={phone_number}
                             type="integer" name="phone_number" />
@@ -117,6 +120,7 @@ function Register({setUser}) {
                     </form>)
                 }}
             </Formik>
+
         </div>
     )
 }

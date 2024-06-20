@@ -64,11 +64,16 @@ body {
 
 #navbarInnerContainer {
   margin: 0 auto;
-  width: 70%;
+  width: 65%;
   height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+#blogThat{
+  position: absolute;
+  left: 10px;
 }
 
 .navbarButtons {
@@ -240,8 +245,22 @@ body {
   justify-content: space-around;
 }
 
+.singleCommentHeaderContainer{
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.deleteCommentButton{
+  background-color: #fff;
+  color: #ff0400;
+  border: none;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
 .commentFormContainer, .commentsContainer{
-  /* border: 1px solid black; */
+  
   width: 45%;
 }
 
@@ -251,7 +270,6 @@ body {
 }
 
 .commentUsername, .commentContent{
-  /* border: 1px solid black; */
   margin: 0;
 }
 
@@ -285,6 +303,7 @@ body {
   margin: 10px auto;
   text-align: center;
   padding: 20px;
+  border-radius: 5px;
 }
 
 .userProfilePhoto{

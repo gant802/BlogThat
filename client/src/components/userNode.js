@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 function UserNode({user}){
 
-    console.log(user)
     
     return(
         <div className="singleUserNodeContainer">
