@@ -13,6 +13,15 @@ from models import db, User, Post, Follow
 if __name__ == '__main__':
     fake = Faker()
     with app.app_context():
+
+
+        blog_that_user = User(username="BlogThat", first_name="Blog",
+                        last_name="That",
+                        email="blogthat@gmail.com",
+                        _password_hash="password")
+
+        db.session.add_all(blog_that_user)
+        db.session.commit()
         print("Starting seed...")
         # Seed code goes here!
         
@@ -67,13 +76,7 @@ if __name__ == '__main__':
         db.session.add_all(follows)
         db.session.commit()
 
-        blog_that_user = User(username="BlogThat", first_name="Blog",
-                        last_name="That",
-                        email="blogthat@gmail.com",
-                        _password_hash="password")
-
-        db.session.add_all(blog_that_user)
-        db.session.commit()
+        
 
 
         

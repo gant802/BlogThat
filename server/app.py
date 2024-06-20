@@ -190,6 +190,7 @@ class PostComments(Resource):
     def get(self, id):
         comments = Comment.query.filter(Comment.post_id == id).all()
         comment_list = [comment.to_dict() for comment in comments]
+        
         return make_response(comment_list, 200)
 api.add_resource(PostComments, '/comments/post/<int:id>')
 
@@ -214,7 +215,7 @@ class PostAComment(Resource):
             return make_response(new_comment.to_dict(), 201)
         except ValueError as v_error:
             return make_response({'errors': [str(v_error)]}, 400)    
-api.add_resource(PostAComment, '/comments/<int:post_id>')
+api.add_resource(PostAComment, '/comment/<int:post_id>')
 
 
 class CommentById(Resource):

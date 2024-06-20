@@ -151,7 +151,7 @@ class Follow(db.Model, SerializerMixin):
 class Comment(db.Model, SerializerMixin):
     __tablename__ = 'comments'
 
-    serialize_rules = ("-post","-user")
+    serialize_rules = ("-post","-user.comments")
 
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.String, nullable=False)
@@ -163,3 +163,6 @@ class Comment(db.Model, SerializerMixin):
     user = db.relationship("User", back_populates="comments")
 
 
+    @property
+    def username(self):
+       return self.user.username
