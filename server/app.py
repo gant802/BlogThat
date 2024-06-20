@@ -189,7 +189,9 @@ api.add_resource(FollowingPosts, '/following_posts')
 class PostComments(Resource):
     def get(self, id):
         comments = Comment.query.filter(Comment.post_id == id).all()
-        comment_list = [comment.to_dict() for comment in comments]
+        sorted_comments = sorted(comments, key=lambda comment: comment.created_at)
+        comment_list = [comment.to_dict() for comment in sorted_comments]
+        
         
         return make_response(comment_list, 200)
 api.add_resource(PostComments, '/comments/post/<int:id>')

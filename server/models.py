@@ -48,7 +48,8 @@ class User(db.Model, SerializerMixin):
         posts = Post.query.filter(Post.user_id.in_(followed_users_ids)).all()
         user_posts = Post.query.filter(Post.user_id == self.id).all()
         posts.extend(user_posts)
-        return posts
+        sorted_posts = sorted(posts, key=lambda post: post.created_at, reverse=True)
+        return sorted_posts
     
     @validates('email')
     def validate_email(self, key, address):
@@ -166,3 +167,9 @@ class Comment(db.Model, SerializerMixin):
     @property
     def username(self):
        return self.user.username
+    
+    @validates('comment')
+    def validate_comment(self, key, comment):
+        if len(comment) == 0:
+            raise ValueError("Comment cannot be empty")
+        return comment
