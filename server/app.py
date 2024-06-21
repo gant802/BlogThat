@@ -324,6 +324,7 @@ class SignUp(Resource):
             return make_response({"error": "Username already exists"}, 401)
         try:
             user = User(
+                username=params.get('username'),
                 first_name=params.get('first_name'),
                 last_name=params.get('last_name'),
                 email=params.get('email'),
