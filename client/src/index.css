@@ -23,6 +23,7 @@ body {
 .loginSignupEditForm > label {
   display: block;
   margin-top: 10px;
+  font-weight: 900;
 }
 
 .loginSignupEditForm > input {
@@ -86,7 +87,7 @@ body {
   margin: 0;
   width: 100%;
   height: 100px;
-  background-color: rgb(99, 99, 246);
+  background-color: #007bff;
   border: 1px solid black;
 }
 
@@ -221,6 +222,7 @@ body {
   height: auto;
   margin: 10px auto;
   background-color: #fff;
+  box-shadow: 0 20px 15px rgba(0, 0, 0, 0.1);
 }
 
 .postHeaderContainer{
@@ -326,7 +328,7 @@ body {
 
 /*---- User Profile ----*/
 .profileInfo{
-  border: 1px solid black;
+  border: 5px solid black;
   width: 20%;
   background-color: #fff;
   margin: 10px auto;
