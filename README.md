@@ -5,7 +5,7 @@
 This is a joint project done by Grant Cummings and Dan Jacoby, it is meant to be a simple clone of X (formerly twitter) and will be updated with new features as time goes on to provide a better user experience.
 
 ## Demo Video
-https://www.youtube.com/watch?v=v4dsklLyYAw&ab_channel=GrantCummings
+https://www.youtube.com/watch?v=V5W7l9sjqqw&ab_channel=GrantCummings
 
 ## User Stories: As a user I can…
 * Create a profile 
