@@ -335,11 +335,6 @@ class SignUp(Resource):
             user.password_hash = params.get('password')
             db.session.add(user)
             db.session.commit()
-            user_BlogThat = User.query.filter_by(username="BlogThat").first()
-            follow_BlogThat = Follow(following_user_id = user_BlogThat.id,
-                follower_user_id = user.id)
-            db.session.add(follow_BlogThat)
-            db.session.commit()
             session['user_id'] = user.id
             return make_response(user.to_dict(), 201)
         except Exception as e:
